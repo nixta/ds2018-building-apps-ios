@@ -21,12 +21,27 @@ class ViewController: UIViewController, UISearchBarDelegate {
 
     let locator:AGSLocatorTask = AGSLocatorTask(url: URL(string: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer")!)
 
+    let geocodeResults:AGSGraphicsOverlay = {
+        // Create a symbol for geocode results
+        let markerSymbol = AGSSimpleMarkerSymbol(style: .circle, color: UIColor.blue, size: 15)
+        markerSymbol.outline = AGSSimpleLineSymbol(style: .solid, color: UIColor.white, width: 2)
+
+        // Set up a Graphics Overlay rendered with that symbol
+        let overlay = AGSGraphicsOverlay()
+        overlay.renderer = AGSSimpleRenderer(symbol: markerSymbol)
+
+        return overlay
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let map = AGSMap(basemapType: .navigationVector, latitude: 33.82496, longitude: -116.53862, levelOfDetail: 17)
 
         mapView.map = map
+
+        // Add the graphics overlay for geocode results to the map.
+        mapView.graphicsOverlays.add(geocodeResults)
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -43,10 +58,22 @@ class ViewController: UIViewController, UISearchBarDelegate {
                 return
             }
 
-            if let result = results?.first, let extent = result.extent {
-                self.mapView.setViewpoint(AGSViewpoint(targetExtent: extent))
+            if let result = results?.first {
+
+                if let extent = result.extent {
+                    self.mapView.setViewpoint(AGSViewpoint(targetExtent: extent))
+                }
+
                 print("Showing first result of \(results!.count): \(result.label)")
+
+                self.geocodeResults.graphics.removeAllObjects()
+                if let location = result.displayLocation {
+                    let resultGraphic = AGSGraphic(geometry: location, symbol: nil, attributes: nil)
+                    self.geocodeResults.graphics.add(resultGraphic)
+                }
             }
+
+
         }
     }
 
