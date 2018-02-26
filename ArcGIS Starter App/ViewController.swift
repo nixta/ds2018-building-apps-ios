@@ -15,7 +15,7 @@
 import UIKit
 import ArcGIS
 
-class ViewController: UIViewController, UISearchBarDelegate {
+class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDelegate {
 
     @IBOutlet weak var mapView: AGSMapView!
 
@@ -27,6 +27,8 @@ class ViewController: UIViewController, UISearchBarDelegate {
         let map = AGSMap(basemapType: .navigationVector, latitude: 33.82496, longitude: -116.53862, levelOfDetail: 17)
 
         mapView.map = map
+
+        mapView.touchDelegate = self
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -46,6 +48,19 @@ class ViewController: UIViewController, UISearchBarDelegate {
             if let result = results?.first, let extent = result.extent {
                 self.mapView.setViewpoint(AGSViewpoint(targetExtent: extent))
                 print("Showing first result of \(results!.count): \(result.label)")
+            }
+        }
+    }
+
+    func geoView(_ geoView: AGSGeoView, didTapAtScreenPoint screenPoint: CGPoint, mapPoint: AGSPoint) {
+        locator.reverseGeocode(withLocation: mapPoint) { (results, error) in
+            guard error == nil else {
+                print("Error reverse geocoding! \(error!.localizedDescription)")
+                return
+            }
+
+            if let result = results?.first {
+                print("You tapped at \(result.label)")
             }
         }
     }
