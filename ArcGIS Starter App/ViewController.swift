@@ -19,6 +19,8 @@ class ViewController: UIViewController, UISearchBarDelegate {
 
     @IBOutlet weak var mapView: AGSMapView!
 
+    let locator:AGSLocatorTask = AGSLocatorTask(url: URL(string: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer")!)
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -29,7 +31,23 @@ class ViewController: UIViewController, UISearchBarDelegate {
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         // Here we'll geocode!
-        print("Search for \(searchBar.text ?? "nil search!")")
+        guard let searchText = searchBar.text else {
+            return
+        }
+
+        print("Search for \(searchText)")
+
+        locator.geocode(withSearchText: searchText) { (results, error) in
+            guard error == nil else {
+                print("Error geocoding! \(error!.localizedDescription)")
+                return
+            }
+
+            if let result = results?.first, let extent = result.extent {
+                self.mapView.setViewpoint(AGSViewpoint(targetExtent: extent))
+                print("Showing first result of \(results!.count): \(result.label)")
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
