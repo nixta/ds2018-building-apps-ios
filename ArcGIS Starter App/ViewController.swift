@@ -33,6 +33,11 @@ class ViewController: UIViewController, UISearchBarDelegate {
         return overlay
     }()
 
+    let poiShortlistLayer:AGSFeatureLayer = {
+        let table = AGSServiceFeatureTable(url: URL(string: "https://services.arcgis.com/OfH668nDRN7tbJh0/arcgis/rest/services/Palm_Springs_Shortlist/FeatureServer/0")!)
+        return AGSFeatureLayer(featureTable: table)
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -42,6 +47,9 @@ class ViewController: UIViewController, UISearchBarDelegate {
 
         // Add the graphics overlay for geocode results to the map.
         mapView.graphicsOverlays.add(geocodeResults)
+
+        // Add the POIs to the map
+        map.operationalLayers.add(poiShortlistLayer)
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
