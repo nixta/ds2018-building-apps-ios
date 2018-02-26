@@ -50,7 +50,14 @@ class ViewController: UIViewController, UISearchBarDelegate {
 
         // Add the POIs to the map
         map.operationalLayers.add(poiShortlistLayer)
+
+        mapView.locationDisplay.start() { error in
+            if let error = error {
+                print("Unable to start location services: \(error.localizedDescription)")
+            }
+        }
     }
+
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         // Here we'll geocode!
