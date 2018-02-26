@@ -15,7 +15,7 @@
 import UIKit
 import ArcGIS
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UISearchBarDelegate {
 
     @IBOutlet weak var mapView: AGSMapView!
 
@@ -25,6 +25,11 @@ class ViewController: UIViewController {
         let map = AGSMap(basemapType: .navigationVector, latitude: 33.82496, longitude: -116.53862, levelOfDetail: 17)
 
         mapView.map = map
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        // Here we'll geocode!
+        print("Search for \(searchBar.text ?? "nil search!")")
     }
 
     override func didReceiveMemoryWarning() {

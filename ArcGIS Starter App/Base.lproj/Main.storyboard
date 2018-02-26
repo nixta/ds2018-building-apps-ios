@@ -19,16 +19,26 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="V47-bH-4fu" customClass="AGSMapView">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <rect key="frame" x="0.0" y="56" width="375" height="611"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="mzv-P2-BOx">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="cHD-bT-VC2"/>
+                                </connections>
+                            </searchBar>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="V47-bH-4fu" firstAttribute="bottom" secondItem="CBF-0k-WBK" secondAttribute="bottom" id="1TQ-5d-i3V"/>
-                            <constraint firstItem="V47-bH-4fu" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="LCH-RO-f8G"/>
+                            <constraint firstItem="mzv-P2-BOx" firstAttribute="trailing" secondItem="CBF-0k-WBK" secondAttribute="trailing" id="KKQ-Kc-nIu"/>
+                            <constraint firstItem="mzv-P2-BOx" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="fRn-ZQ-A57"/>
                             <constraint firstItem="V47-bH-4fu" firstAttribute="trailing" secondItem="CBF-0k-WBK" secondAttribute="trailing" id="l8M-nL-zij"/>
+                            <constraint firstItem="V47-bH-4fu" firstAttribute="top" secondItem="mzv-P2-BOx" secondAttribute="bottom" id="oT4-Bz-Bx4"/>
                             <constraint firstItem="V47-bH-4fu" firstAttribute="leading" secondItem="CBF-0k-WBK" secondAttribute="leading" id="qcE-di-VlC"/>
+                            <constraint firstItem="mzv-P2-BOx" firstAttribute="leading" secondItem="CBF-0k-WBK" secondAttribute="leading" id="tIO-zx-ghe"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="CBF-0k-WBK"/>
                     </view>
