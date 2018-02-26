@@ -17,9 +17,24 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="V47-bH-4fu" customClass="AGSMapView">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="V47-bH-4fu" firstAttribute="bottom" secondItem="CBF-0k-WBK" secondAttribute="bottom" id="1TQ-5d-i3V"/>
+                            <constraint firstItem="V47-bH-4fu" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="LCH-RO-f8G"/>
+                            <constraint firstItem="V47-bH-4fu" firstAttribute="trailing" secondItem="CBF-0k-WBK" secondAttribute="trailing" id="l8M-nL-zij"/>
+                            <constraint firstItem="V47-bH-4fu" firstAttribute="leading" secondItem="CBF-0k-WBK" secondAttribute="leading" id="qcE-di-VlC"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="CBF-0k-WBK"/>
                     </view>
+                    <connections>
+                        <outlet property="mapView" destination="V47-bH-4fu" id="VW7-jA-Ab2"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

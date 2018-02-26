@@ -13,12 +13,18 @@
 // limitations under the License.
 
 import UIKit
+import ArcGIS
 
 class ViewController: UIViewController {
+
+    @IBOutlet weak var mapView: AGSMapView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let map = AGSMap(basemapType: .navigationVector, latitude: 33.82496, longitude: -116.53862, levelOfDetail: 17)
+
+        mapView.map = map
     }
 
     override func didReceiveMemoryWarning() {
