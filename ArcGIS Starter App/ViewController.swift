@@ -15,11 +15,16 @@
 import UIKit
 import ArcGIS
 
-class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDelegate {
+class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDelegate, AGSCalloutDelegate {
 
     @IBOutlet weak var mapView: AGSMapView!
 
     let locator:AGSLocatorTask = AGSLocatorTask(url: URL(string: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer")!)
+    let routeTask:AGSRouteTask = {
+        let routeTask = AGSRouteTask(url: URL(string: "https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World")!)
+        routeTask.credential = _agsCredential
+        return routeTask
+    }()
 
     let geocodeResults:AGSGraphicsOverlay = {
         // Create a symbol for geocode results
@@ -33,6 +38,17 @@ class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDele
         return overlay
     }()
 
+    let routeResults:AGSGraphicsOverlay = {
+        // Create a symbol for geocode results
+        let lineSymbol = AGSSimpleLineSymbol(style: .solid, color: .orange, width: 10)
+
+        // Set up a Graphics Overlay rendered with that symbol
+        let overlay = AGSGraphicsOverlay()
+        overlay.renderer = AGSSimpleRenderer(symbol: lineSymbol)
+
+        return overlay
+    }()
+
     let poiShortlistLayer:AGSFeatureLayer = {
         let table = AGSServiceFeatureTable(url: URL(string: "https://services.arcgis.com/OfH668nDRN7tbJh0/arcgis/rest/services/Palm_Springs_Shortlist/FeatureServer/0")!)
         return AGSFeatureLayer(featureTable: table)
@@ -41,11 +57,12 @@ class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let map = AGSMap(basemapType: .navigationVector, latitude: 33.82496, longitude: -116.53862, levelOfDetail: 17)
+        let map = AGSMap(basemapType: .navigationVector, latitude: 33.82496, longitude: -116.53862, levelOfDetail: 15)
 
         mapView.map = map
 
         // Add the graphics overlay for geocode results to the map.
+        mapView.graphicsOverlays.add(routeResults)
         mapView.graphicsOverlays.add(geocodeResults)
 
         // Add the POIs to the map
@@ -58,6 +75,9 @@ class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDele
         }
 
         mapView.touchDelegate = self
+
+        mapView.callout.delegate = self
+        mapView.callout.accessoryButtonImage = #imageLiteral(resourceName: "directions")
     }
 
 
@@ -107,6 +127,58 @@ class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDele
 
         }
     }
+
+
+    func didTapAccessoryButton(for callout: AGSCallout) {
+        defer {
+            mapView.callout.dismiss()
+        }
+
+        guard let result = callout.representedObject as? AGSArcGISFeature,
+            let resultLocation = result.geometry as? AGSPoint else {
+                print("Need a point location")
+                return
+        }
+
+        self.routeTask.defaultRouteParameters(completion: { (params, error) in
+            guard error == nil else {
+                print("Error getting default route task parameters: \(error!.localizedDescription)")
+                return
+            }
+
+            guard let params = params else {
+                print("No default route task parameters found")
+                return
+            }
+
+            guard let myLocation = self.mapView.locationDisplay.mapLocation else {
+                print("Unablet to get device location")
+                return
+            }
+
+            let start = AGSStop(point: myLocation)
+            let end = AGSStop(point: resultLocation)
+
+            start.name = "Your location"
+            end.name = (result.attributes.value(forKey: "Name") as? String) ?? "Destination"
+
+            params.setStops([start, end])
+
+            self.routeTask.solveRoute(with: params, completion: { (routeResult, error) in
+                guard error == nil else {
+                    print("Error solving route: \(error!.localizedDescription)")
+                    return
+                }
+
+                if let routeGeom = routeResult?.routes.first?.routeGeometry {
+                    self.routeResults.graphics.removeAllObjects()
+                    self.routeResults.graphics.add(AGSGraphic(geometry: routeGeom, symbol: nil, attributes: nil))
+                }
+            })
+        })
+
+    }
+
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

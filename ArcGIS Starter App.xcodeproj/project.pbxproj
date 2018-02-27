@@ -13,6 +13,7 @@
 		D9B060AE1E4D2AF800D6104E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9B060AD1E4D2AF800D6104E /* Assets.xcassets */; };
 		D9B060B11E4D2AF800D6104E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D9B060AF1E4D2AF800D6104E /* LaunchScreen.storyboard */; };
 		D9FE0DD620449306008F25DA /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D9FE0DD520449306008F25DA /* ArcGIS.bundle */; };
+		D9FE0DD82044C53D008F25DA /* credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FE0DD72044C53D008F25DA /* credentials.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		D9B060B01E4D2AF800D6104E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D9B060B21E4D2AF800D6104E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D9FE0DD520449306008F25DA /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = "$(HOME)/Library/SDKs/ArcGIS/iOS/Frameworks/Static/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle"; sourceTree = "<group>"; };
+		D9FE0DD72044C53D008F25DA /* credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = credentials.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 			children = (
 				D9B060A61E4D2AF800D6104E /* AppDelegate.swift */,
 				D9B060A81E4D2AF800D6104E /* ViewController.swift */,
+				D9FE0DD72044C53D008F25DA /* credentials.swift */,
 				D9B060AA1E4D2AF800D6104E /* Main.storyboard */,
 				D9B060AD1E4D2AF800D6104E /* Assets.xcassets */,
 				D9B060AF1E4D2AF800D6104E /* LaunchScreen.storyboard */,
@@ -141,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9B060A91E4D2AF800D6104E /* ViewController.swift in Sources */,
+				D9FE0DD82044C53D008F25DA /* credentials.swift in Sources */,
 				D9B060A71E4D2AF800D6104E /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
