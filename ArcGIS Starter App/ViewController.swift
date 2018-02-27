@@ -82,15 +82,27 @@ class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDele
 
 
     func geoView(_ geoView: AGSGeoView, didTapAtScreenPoint screenPoint: CGPoint, mapPoint: AGSPoint) {
-        mapView.identifyLayer(poiShortlistLayer, screenPoint: screenPoint, tolerance: 22, returnPopupsOnly: false) { results in
-            guard let result = results.geoElements.first as? AGSArcGISFeature else {
-                print("Nothing tapped")
-                self.mapView.callout.dismiss()
+        mapView.identify(routeResults, screenPoint: screenPoint, tolerance: 10, returnPopupsOnly: false) { (routeResults) in
+            guard let routeGraphic = routeResults.graphics.first else {
+                self.mapView.identifyLayer(self.poiShortlistLayer, screenPoint: screenPoint, tolerance: 22, returnPopupsOnly: false) { results in
+                    guard let result = results.geoElements.first as? AGSArcGISFeature else {
+                        print("Nothing tapped")
+                        self.mapView.callout.dismiss()
+                        return
+                    }
+
+                    self.mapView.callout.show(for: result, tapLocation: mapPoint, animated: true)
+                    self.mapView.callout.title = result.attributes.value(forKey: "Name") as? String ?? "Go away"
+                    self.mapView.callout.detail = nil
+                    self.mapView.callout.isAccessoryButtonHidden = false
+                }
                 return
             }
 
-            self.mapView.callout.show(for: result, tapLocation: mapPoint, animated: true)
-            self.mapView.callout.title = result.attributes.value(forKey: "Name") as? String ?? "Go away"
+            self.mapView.callout.show(for: routeGraphic, tapLocation: mapPoint, animated: true)
+            self.mapView.callout.title = routeGraphic.attributes.value(forKey: "title") as? String ?? "No deets"
+            self.mapView.callout.detail = routeGraphic.attributes.value(forKey: "detail") as? String
+            self.mapView.callout.isAccessoryButtonHidden = true
         }
     }
 
@@ -156,6 +168,9 @@ class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDele
                 return
             }
 
+            params.outputSpatialReference = self.mapView.spatialReference
+            params.directionsDistanceUnits = AGSUnitSystem.metric
+
             let start = AGSStop(point: myLocation)
             let end = AGSStop(point: resultLocation)
 
@@ -170,9 +185,13 @@ class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDele
                     return
                 }
 
-                if let routeGeom = routeResult?.routes.first?.routeGeometry {
+                if let route = routeResult?.routes.first, let routeGeom = route.routeGeometry {
                     self.routeResults.graphics.removeAllObjects()
-                    self.routeResults.graphics.add(AGSGraphic(geometry: routeGeom, symbol: nil, attributes: nil))
+                    let outUnit = AGSLinearUnit.miles()
+                    let outVal = (outUnit.convert(route.totalLength, from: AGSLinearUnit.meters())*100).rounded()/100
+                    let title = "\(outVal)\(outUnit.abbreviation), \((route.totalTime*100).rounded()/100) minutes"
+                    let detail = "\(start.name) to \(end.name)"
+                    self.routeResults.graphics.add(AGSGraphic(geometry: routeGeom, symbol: nil, attributes: ["title":title, "detail":detail]))
                 }
             })
         })
