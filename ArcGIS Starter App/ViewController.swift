@@ -28,8 +28,8 @@ class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDele
 
     let geocodeResults:AGSGraphicsOverlay = {
         // Create a symbol for geocode results
-        let markerSymbol = AGSSimpleMarkerSymbol(style: .circle, color: UIColor.blue, size: 15)
-        markerSymbol.outline = AGSSimpleLineSymbol(style: .solid, color: UIColor.white, width: 2)
+        let markerSymbol = AGSSimpleMarkerSymbol(style: .circle, color: .orange, size: 15)
+        markerSymbol.outline = AGSSimpleLineSymbol(style: .solid, color: .black, width: 3)
 
         // Set up a Graphics Overlay rendered with that symbol
         let overlay = AGSGraphicsOverlay()
@@ -40,7 +40,7 @@ class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDele
 
     let routeResults:AGSGraphicsOverlay = {
         // Create a symbol for geocode results
-        let lineSymbol = AGSSimpleLineSymbol(style: .solid, color: .orange, width: 10)
+        let lineSymbol = AGSSimpleLineSymbol(style: .solid, color: UIColor.orange.withAlphaComponent(0.75), width: 6)
 
         // Set up a Graphics Overlay rendered with that symbol
         let overlay = AGSGraphicsOverlay()
@@ -57,7 +57,7 @@ class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let map = AGSMap(basemapType: .navigationVector, latitude: 33.82496, longitude: -116.53862, levelOfDetail: 15)
+        let map = AGSMap(basemapType: .lightGrayCanvasVector, latitude: 33.82496, longitude: -116.54362, levelOfDetail: 15)
 
         mapView.map = map
 
@@ -192,6 +192,8 @@ class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDele
                     let title = "\(outVal)\(outUnit.abbreviation), \((route.totalTime*100).rounded()/100) minutes"
                     let detail = "\(start.name) to \(end.name)"
                     self.routeResults.graphics.add(AGSGraphic(geometry: routeGeom, symbol: nil, attributes: ["title":title, "detail":detail]))
+
+                    self.mapView.setViewpoint(AGSViewpoint(targetExtent: routeGeom.extent.toBuilder().expand(byFactor: 1.2).toGeometry()), completion: nil)
                 }
             })
         })
