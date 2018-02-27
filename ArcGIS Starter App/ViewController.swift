@@ -15,7 +15,7 @@
 import UIKit
 import ArcGIS
 
-class ViewController: UIViewController, UISearchBarDelegate {
+class ViewController: UIViewController, UISearchBarDelegate, AGSGeoViewTouchDelegate {
 
     @IBOutlet weak var mapView: AGSMapView!
 
@@ -55,6 +55,22 @@ class ViewController: UIViewController, UISearchBarDelegate {
             if let error = error {
                 print("Unable to start location services: \(error.localizedDescription)")
             }
+        }
+
+        mapView.touchDelegate = self
+    }
+
+
+    func geoView(_ geoView: AGSGeoView, didTapAtScreenPoint screenPoint: CGPoint, mapPoint: AGSPoint) {
+        mapView.identifyLayer(poiShortlistLayer, screenPoint: screenPoint, tolerance: 22, returnPopupsOnly: false) { results in
+            guard let result = results.geoElements.first as? AGSArcGISFeature else {
+                print("Nothing tapped")
+                self.mapView.callout.dismiss()
+                return
+            }
+
+            self.mapView.callout.show(for: result, tapLocation: mapPoint, animated: true)
+            self.mapView.callout.title = result.attributes.value(forKey: "Name") as? String ?? "Go away"
         }
     }
 
